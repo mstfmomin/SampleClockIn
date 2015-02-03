@@ -1,0 +1,100 @@
+﻿@using Microsoft.AspNet.Identity
+@model SampleClockin.Models.TimeDataContext
+
+<script>
+    $(document).ready(function () {
+        $("#hide").click(function () {
+            $("#show").show();
+            $("#hide").hide();
+        });
+        $("#show").click(function () {
+            $("#hide").show();
+        });
+    });
+</script>
+
+<div class="page-container">
+    <div class="container">
+        <div class="row row-offcanvas row-offcanvas-left">
+
+            <!-- sidebar -->
+            <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="banner">
+                <div class="pull-left navbar-text">
+                    <div>
+                        <img src="http://placehold.it/150x150">
+                    </div>
+                    @Html.ActionLink(User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+                    <br />
+                    <br />
+                    <br />
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        <div>
+                            <input type="submit" value="ClockIn" name="buttonType" class="btn btn-warning btn-lg" id="hide" />
+                        </div>
+                        <br />
+                        <div>
+                            <input type="submit" value="ClockOut" name="buttonType" class="btn btn-warning btn-lg" id="show" />
+                        </div>
+                        @*<div>
+                            <input type="submit" value="TotalTime" name="buttonType" class="btn btn-warning btn-lg" />
+                        </div>*@
+                    }
+                </div>
+            </div>
+            <!-- main area -->
+            <div class="col-xs-12 col-sm-9">
+                <h1>Time Card</h1>
+                <p>Today: @DateTime.Now</p>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <h3> Clock IN</h3>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <h3> Clock OUT</h3>
+
+                        </div>
+
+                        <div class="col-sm-3">
+                            <h3> Total Hours</h3>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-3">
+                            @foreach (var d in Model.Times) // We reference the dbcontext's sets directly
+                            {
+                                @d.ClockIn <br />
+                            }
+
+                        </div>
+
+                        <div class="col-sm-3">
+                            @foreach (var d in Model.Times1) // We reference the dbcontext's sets directly
+                            {
+                                @d.ClockOut  <br />
+                            }
+
+                        </div>
+
+                        <div class="col-sm-3">
+                            @foreach (var e in Model.TotalTimes) // We reference the dbcontext's sets directly
+                            {
+                                @e.RegHour  <br />
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.col-xs-12 main -->
+        </div><!--/.row-->
+    </div><!--/.container-->
+</div><!--/.page-container-->
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
