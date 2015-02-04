@@ -19,8 +19,8 @@ namespace SampleClockin.Controllers
         {
 
 
-            
-            
+
+
             return View(db.Times.ToList());
         }
 
@@ -43,7 +43,7 @@ namespace SampleClockin.Controllers
 
         public ActionResult Create()
         {
-            
+
 
 
 
@@ -56,7 +56,7 @@ namespace SampleClockin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id")] Time time, Time1 time1, TotalTime totalTimes, string buttonType)
+        public ActionResult Create([Bind(Include = "Id")] Time time, Time1 time1, TotalTime TotalTimes1, string buttonType)
         {
 
 
@@ -73,14 +73,33 @@ namespace SampleClockin.Controllers
             }
 
 
+
+
+
             if (buttonType == "ClockOut")
             {
                 if (ModelState.IsValid)
                 {
+
                     db.Times1.Add(time1);
                     db.SaveChanges();
 
-                    db.TotalTimes.Add(totalTimes);
+                    var query = from t in db.Times
+                                join t1 in db.Times1 on t.ID equals t1.ID
+                                select new { t.ClockIn, t1.ClockOut };
+
+                    foreach (var group in query)
+                    {
+
+                        TotalTime nt = new TotalTime
+                        {
+                            TotalHours = (group.ClockOut - group.ClockIn),
+                        };
+
+
+                    }
+
+                    db.TotalTimes.Add(TotalTimes1);
                     db.SaveChanges();
 
                     return RedirectToAction("Create");
@@ -110,10 +129,10 @@ namespace SampleClockin.Controllers
             //    join  Otime in db.Times1 on Ctime.Id equals Otime.Id
             //    select new (NewTime => Ctime.ClockIn-Otime.ClockOut );
 
-          //  var projects = db.Times.Join(db.Times1, s => s.Id, d => d.Id,
-          //(s, d) => new { ClockInTime = s.ClockIn, ClockOutTime = d.ClockOut })
-          //  .Select(a => a.ClockInTime - a.ClockOutTime);
-          //  db.TotalTimes.Add(projects);
+            //  var projects = db.Times.Join(db.Times1, s => s.Id, d => d.Id,
+            //(s, d) => new { ClockInTime = s.ClockIn, ClockOutTime = d.ClockOut })
+            //  .Select(a => a.ClockInTime - a.ClockOutTime);
+            //  db.TotalTimes.Add(projects);
 
             return View();
         }
